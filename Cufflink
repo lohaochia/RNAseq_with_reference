@@ -1,0 +1,32 @@
+#!/usr/bin/bash
+#SBATCH -A MST109178                        
+#SBATCH -J extracting_matching_read_id      
+#SBATCH -p ngs372G                           
+#SBATCH -c 56                            
+#SBATCH --mem=372g                          
+#SBATCH -o %j.log                           
+#SBATCH -e %j.log                           
+#SBATCH --mail-user=lohaochia@ntu.edu.tw   
+#SBATCH --mail-type=END
+
+
+
+GFF3="locus.gff"# 設置參考序列 (GFF)
+GENOME="/work/u1432917/IRGSP-1.0_genome.fasta"  #  設置參考序列
+THREADS=50  # 
+
+# Cufflinks可以不用跑
+#for sample in L1 L2 L3 S1 S2 S3
+#do
+    #/opt/ohpc/Taiwania3/pkg/biology/Cufflinks/cufflinks-2.2.1.Linux_x86_64/cufflinks -p $THREADS -o ${sample}_output -g $GFF3 ${sample}_1sorted.bam
+#done
+
+
+
+
+# Cuffdiff值交跑表達量分析
+/opt/ohpc/Taiwania3/pkg/biology/Cufflinks/cufflinks-2.2.1.Linux_x86_64/cuffdiff -o L_NP_diff_out_NP_align -b $GENOME -p $THREADS -L Long,NP \
+    $GFF3 \
+    L1_NP_aligned_reads_sorted.bam,L2_NP_aligned_reads_sorted.bam,L3_NP_aligned_reads_sorted.bam \
+    N1_NP_aligned_reads_sorted.bam,N2_NP_aligned_reads_sorted.bam,N3_NP_aligned_reads_sorted.bam
+
