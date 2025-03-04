@@ -1,0 +1,20 @@
+#!/usr/bin/sh
+#SBATCH -A MST109178                        # Account name/project number
+#SBATCH -J F2fastq_preprocessing              # Job name
+#SBATCH -p ngs53G                           # Partition Name 等同PBS裡面的 -q Queue name
+#SBATCH -c 8                                # 使用的core數 請參考Queue資源設定
+#SBATCH --mem=53g                           # 使用的記憶體量 請參考Queue資源設定
+#SBATCH -o %j.log                           # Path to the standard output file I
+#SBATCH -e %j.log                           # Path to the standard error ouput file
+#SBATCH --mail-user=lohaochia@ntu.edu.tw    # email
+#SBATCH --mail-type=END
+
+module load biology
+module load fastp/0.23.2
+
+##############################
+##所用參數皆採預設值
+
+##執行F2_fastq預處理
+fastp -i /work/u1432917/SRR10053795_1.fastq.gz -I /work/u1432917/SRR10053795_2.fastq.gz -o /work/u1432917/Macou_clean_read/M3_2_trimmed_R1.fq.gz -O /work/u1432917/Macou_clean_read/M3_2_trimmed_R2.fq.gz -t 0 -T 0 -j /work/u1432917/Macou_clean_read/fastp_M3_2.json -h /work/u1432917/Macou_clean_read/M3_2.html -R M3_2 -5 -W 4 -M 20 -n 5 -q 20 -l 36 -p -c -w 8
+
