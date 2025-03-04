@@ -1,0 +1,46 @@
+#!/usr/bin/bash
+#SBATCH -A MST109178                        
+#SBATCH -J extracting_matching_read_id      
+#SBATCH -p ngs372G                           
+#SBATCH -c 56                            
+#SBATCH --mem=372g                          
+#SBATCH -o %j.log                           
+#SBATCH -e %j.log                           
+#SBATCH --mail-user=lohaochia@ntu.edu.tw   
+#SBATCH --mail-type=END
+
+module load biology
+module load HISAT2/2.2.1
+module load Samtools/1.15.1
+#########################################
+# 生成index
+hisat2-build -p 8 /work/u1432917/Oryza_sativa_ir64.OsIR64RS1.cds.all.fa /work/u1432917/IR64_hisat2_index
+####################################################################
+##################################################################
+# 比對生成sam檔
+hisat2 -p 8 -x /work/u1432917/IR64_hisat2_index -1 /work/u1432917/Clean_read/L1_trimmed_R1.fq.gz -2 /work/u1432917/Clean_read/L1_trimmed_R2.fq.gz -S L1_aligned_reads.sam
+######sam檔轉換###################################################
+#sam->ban
+samtools view -bS L1_aligned_reads.sam > L1_aligned_reads.bam
+#sort
+samtools sort L1_aligned_reads.bam -o L1_aligned_reads_sorted.bam
+#indix
+samtools index L1_aligned_reads_sorted.bam
+
+hisat2輸出結果
+Aligned to IR64
+48859224 reads; of these:
+  48859224 (100.00%) were paired; of these:
+    13082448 (26.78%) aligned concordantly 0 times
+    34347441 (70.30%) aligned concordantly exactly 1 time
+    1429335 (2.93%) aligned concordantly >1 times
+    ----
+    13082448 pairs aligned concordantly 0 times; of these:
+      1665236 (12.73%) aligned discordantly 1 time
+    ----
+    11417212 pairs aligned 0 times concordantly or discordantly; of these:
+      22834424 mates make up the pairs; of these:
+        21924176 (96.01%) aligned 0 times
+        837115 (3.67%) aligned exactly 1 time
+        73133 (0.32%) aligned >1 times
+77.56% overall alignment rate
